@@ -1,0 +1,28 @@
+version: '3.9'
+
+services:
+  couchbase:
+    image: 'kubrakoken/couchbase:latest'
+    container_name: couchbase
+    ports:
+      - "8091-8097:8091-8097"
+      - "9123:9123"
+      - "11207:11207"
+      - "11210:11210"
+      - "11280:11280"
+      - "18091-18097:18091-18097"
+  todo-service:
+    container_name: 'todo_service'
+    ports:
+      - "8080:8080"
+    environment:
+      - DB_HOST=couchbase
+      - DB_BUCKET=todo
+      - DB_USERNAME=Administrator
+      - DB_PASSWORD=password
+    image: 'kubrakoken/todo:latest'
+    build:
+      context: .
+      dockerfile: Dockerfile
+    depends_on:
+      - couchbase
